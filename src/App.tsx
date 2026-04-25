@@ -49,11 +49,11 @@ export default function App() {
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/20">
-              <Waves className="text-white h-6 w-6" />
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center shadow-md shadow-brand-primary/20">
+              <Waves className="text-white h-4 w-4" />
             </div>
-            <span className="font-sans font-bold text-xl text-brand-slate-dark tracking-tight">Descomplica360</span>
+            <span className="font-sans font-bold text-lg text-brand-slate-dark tracking-tight">Descomplica360</span>
           </div>
           
           <div className="hidden md:flex items-center gap-10">
@@ -73,7 +73,7 @@ export default function App() {
             onClick={trackLead}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-brand-slate-dark text-white px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-brand-primary transition-all active:scale-95 shadow-lg shadow-slate-200"
+            className="bg-brand-slate-dark text-white px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-brand-primary transition-all active:scale-95 shadow-lg shadow-slate-200"
           >
             Obter Protocolo
           </a>
@@ -81,94 +81,87 @@ export default function App() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-40 pb-24 px-4 overflow-hidden">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-          <div className="max-w-xl">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="inline-block px-3 py-1 mb-6 rounded-full bg-brand-primary/10 text-brand-primary-dark text-[10px] font-bold uppercase tracking-widest"
-            >
-              Método Baseado em Evidências
-            </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-5xl md:text-7xl font-bold text-brand-slate-dark leading-[1.1] mb-8"
-            >
-              Protocolo <span className="text-brand-primary italic font-serif font-normal">30m OFF</span>
-            </motion.h1>
-
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-lg md:text-xl text-brand-slate-light mb-12 leading-relaxed"
-            >
-              Retome o controle da sua mente em apenas 30 minutos com técnicas cientificamente comprovadas pela psicologia e neurociência.
-            </motion.p>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-col sm:flex-row items-center gap-4"
-            >
-              <a 
-                href={CHECKOUT_URL}
-                onClick={trackLead}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto bg-brand-slate-dark text-white px-10 py-5 rounded-2xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-primary transition-all shadow-2xl shadow-slate-300 group"
-              >
-                Começar agora <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </a>
-              <div className="text-[10px] text-brand-slate-light italic font-medium">
-                Compra segura • Acesso imediato
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Hero Visual Mockup - CSS Based */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="relative flex justify-center lg:justify-end"
+      <section className="pt-28 pb-20 px-4 overflow-hidden text-center">
+        <div className="max-w-5xl mx-auto">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-4xl md:text-7xl lg:text-8xl font-bold text-brand-slate-dark leading-tight mb-8 tracking-tighter whitespace-nowrap"
           >
-            <div className="absolute -top-20 -right-20 w-80 h-80 bg-brand-primary/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
-            
-            <div className="relative group">
-              <div className="w-[300px] h-[400px] bg-white rounded-r-3xl shadow-[30px_50px_80px_-20px_rgba(0,0,0,0.2)] flex flex-col relative overflow-hidden border border-gray-100 transform -rotate-3 group-hover:rotate-0 transition-all duration-700">
-                <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-gray-200 to-transparent"></div>
-                <div className="p-10 flex flex-col h-full bg-white">
-                  <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-primary mb-6">Protocolo Oficial</div>
-                  <h2 className="text-5xl font-black leading-tight text-brand-slate-dark mb-auto tracking-tighter">
-                    30m <br/> 
-                    <span className="text-brand-primary font-serif italic font-normal">OFF</span>
-                  </h2>
-                  <div className="mt-auto">
-                    <div className="h-1 w-12 bg-brand-primary mb-4"></div>
-                    <p className="text-[10px] font-bold text-brand-slate-light uppercase tracking-widest leading-relaxed">Método Baseado em <br/>Evidências Científicas</p>
-                  </div>
-                </div>
-              </div>
+            Protocolo <span className="text-brand-primary italic font-serif font-normal">30m OFF</span>
+          </motion.h1>
+
+          {/* VSL Video Section */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="relative mb-6 max-w-4xl mx-auto"
+          >
+            <div className="relative aspect-video bg-brand-slate-dark rounded-[2.5rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border-4 border-white group">
+              <iframe 
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/dM9Bg9TwQGo?controls=1&rel=0&modestbranding=1" 
+                title="VSL Protocolo 30m OFF"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
               
-              <motion.div 
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-6 -left-12 bg-white p-6 rounded-3xl shadow-2xl border border-gray-50 flex items-center gap-4 z-20 hidden sm:flex"
-              >
-                <div className="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center">
-                  <Heart className="h-5 w-5 text-brand-primary" strokeWidth={3} />
-                </div>
-                <div>
-                  <p className="text-xs font-black text-brand-slate-dark tracking-widest uppercase">Protocolo</p>
-                  <p className="text-[10px] text-brand-slate-light font-bold">Verificado</p>
-                </div>
-              </motion.div>
+              <div className="absolute inset-0 pointer-events-none border-4 border-brand-primary/20 rounded-[2.5rem] animate-pulse"></div>
+            </div>
+            
+            <motion.div 
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl border border-gray-50 flex items-center gap-3 z-10 hidden sm:flex"
+            >
+              <div className="w-8 h-8 bg-brand-primary/10 rounded-full flex items-center justify-center">
+                <Heart className="h-4 w-4 text-brand-primary" fill="currentColor" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-brand-slate-dark uppercase tracking-widest">Protocolo</p>
+                <p className="text-[9px] text-brand-slate-light font-bold">Verificado por 5k+ Alunos</p>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="inline-block px-3 py-1 mb-10 rounded-full bg-brand-primary/10 text-brand-primary-dark text-[10px] font-bold uppercase tracking-widest"
+          >
+            Método Baseado em Evidências Científicas
+          </motion.div>
+
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-lg md:text-2xl text-brand-slate-light mb-12 leading-relaxed max-w-2xl mx-auto"
+          >
+            Retome o controle da sua mente em apenas 30 minutos com técnicas cientificamente comprovadas pela psicologia e neurociência.
+          </motion.p>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <a 
+              href={CHECKOUT_URL}
+              onClick={trackLead}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto bg-brand-slate-dark text-white px-10 py-5 rounded-2xl text-sm font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-brand-primary transition-all shadow-2xl shadow-slate-300 group"
+            >
+              Começar agora <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </a>
+            <div className="text-[10px] text-brand-slate-light italic font-medium">
+              Compra segura • Acesso imediato
             </div>
           </motion.div>
         </div>
