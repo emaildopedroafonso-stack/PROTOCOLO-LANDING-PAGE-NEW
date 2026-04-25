@@ -102,7 +102,7 @@ export default function App() {
             <div className="relative aspect-video bg-brand-slate-dark rounded-[2.5rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border-4 border-white group">
               <iframe 
                 className="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/dM9Bg9TwQGo?controls=1&rel=0&modestbranding=1" 
+                src="https://www.youtube.com/embed/dM9Bg9TwQGo?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1" 
                 title="VSL Protocolo 30m OFF"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
