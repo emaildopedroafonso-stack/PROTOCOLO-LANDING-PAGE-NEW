@@ -27,7 +27,7 @@ interface CustomWindow extends Window {
 declare const window: CustomWindow;
 
 const CHECKOUT_URL = "https://pay.kiwify.com.br/FpGJrPt";
-const VSL_URL = "https://www.youtube.com/embed/dM9Bg9TwQGo?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1";
+const VSL_URL = "https://www.youtube.com/embed/dM9Bg9TwQGo?autoplay=1&controls=1&rel=0&modestbranding=1";
 
 export default function App() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
