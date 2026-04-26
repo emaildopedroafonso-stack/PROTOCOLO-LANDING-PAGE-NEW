@@ -88,45 +88,18 @@ export default function App() {
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 tracking-tight"
+            className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-8 tracking-tight"
           >
             Desacelere sua mente nos <span className="text-brand-primary">30 minutos</span> antes de dormir
           </motion.h1>
 
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-brand-slate-light mb-8 max-w-3xl mx-auto leading-relaxed"
-          >
-            O Protocolo 30M OFF™ é uma rotina digital com 3 áudios guiados para ajudar você a reduzir estímulos, relaxar o corpo e conduzir a mente para um estado mais calmo antes de dormir.
-          </motion.p>
-
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4 }}
-            className="grid md:grid-cols-3 gap-4 mb-12 max-w-2xl mx-auto"
+            transition={{ delay: 0.2 }}
+            className="relative mb-10 max-w-4xl mx-auto"
           >
-            {[
-              "3 áudios guiados para aplicar",
-              "Respiração, relaxamento e visualização",
-              "Acesso digital imediato"
-            ].map((text, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-3 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/80">
-                <CheckCircle2 className="h-4 w-4 text-brand-primary" />
-                {text}
-              </div>
-            ))}
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="relative mb-12 max-w-4xl mx-auto"
-          >
-            <p className="text-xs font-black text-brand-primary uppercase tracking-[0.3em] mb-4">Assista e entenda como funciona</p>
+            <p className="text-[10px] font-black text-brand-primary uppercase tracking-[0.4em] mb-4">Assista e entenda como funciona</p>
             <div className="relative aspect-video bg-black rounded-[2rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] border border-white/10 group">
               <iframe 
                 className="absolute inset-0 w-full h-full"
@@ -137,6 +110,34 @@ export default function App() {
                 allowFullScreen
               ></iframe>
             </div>
+          </motion.div>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-lg md:text-xl text-brand-slate-light mb-10 max-w-3xl mx-auto leading-relaxed"
+          >
+            O Protocolo 30M OFF™ é um eBook digital completo com um passo a passo simples para ajudar você a reduzir estímulos, organizar os pensamentos e criar um ritual de desaceleração antes de dormir — com áudios guiados bônus para facilitar a prática.
+          </motion.p>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 max-w-4xl mx-auto"
+          >
+            {[
+              "Guia completo em PDF passo a passo",
+              "Bônus: Áudios guiados práticos",
+              "Ritual simples de 30 minutos",
+              "Acesso digital imediato"
+            ].map((text, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-widest text-white/80">
+                <CheckCircle2 className="h-4 w-4 text-brand-primary flex-shrink-0" />
+                {text}
+              </div>
+            ))}
           </motion.div>
 
           <motion.div 
@@ -155,11 +156,31 @@ export default function App() {
               Quero começar o Protocolo 30M OFF™ <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </a>
             <p className="text-[10px] text-brand-slate-light uppercase tracking-widest font-bold">
-              Acesso digital imediato • Compra segura • Rotina simples de aplicar
+              Acesso digital imediato • eBook completo em PDF • Áudios bônus inclusos
             </p>
           </motion.div>
         </div>
       </header>
+
+      {/* NEW: O que é o Protocolo Section */}
+      <section className="py-24 px-4 border-t border-white/5">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">O que é o Protocolo 30M OFF™?</h2>
+          <div className="space-y-6 text-lg text-brand-slate-light leading-relaxed">
+            <p>
+              O Protocolo 30M OFF™ é um eBook digital completo criado para orientar você, passo a passo, na construção de um ritual noturno de desaceleração. Dentro do material, você aprende como preparar o ambiente, reduzir estímulos, usar técnicas simples de respiração, relaxamento corporal e visualização guiada para tornar os minutos antes de dormir mais leves e organizados.
+            </p>
+            <p>
+              Além do guia completo em PDF, você recebe áudios bônus para acompanhar cada etapa do protocolo e facilitar a aplicação prática, especialmente nas primeiras noites.
+            </p>
+          </div>
+          <div className="mt-12 bg-white/5 border border-white/10 p-8 rounded-[2rem] inline-block">
+            <p className="text-2xl font-serif italic text-brand-primary">
+              “O PDF ensina o método. Os áudios ajudam você a colocar em prática.”
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* 2. Identificação do Problema */}
       <section className="py-24 px-4 bg-brand-slate-dark/30">
@@ -276,34 +297,81 @@ export default function App() {
       <section className="py-32 px-4 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Uma sequência guiada em 3 áudios</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Como o protocolo funciona na prática</h2>
             <p className="text-brand-slate-light max-w-2xl mx-auto">
-              Você não precisa decidir o que fazer. Basta seguir a ordem recomendada e deixar os áudios conduzirem o processo.
+              O guia completo em PDF mostra como aplicar a rotina nos 30 minutos antes de dormir. Depois de entender o passo a passo, você pode usar os áudios bônus para conduzir a prática com mais facilidade.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                step: "Passo 1",
+                title: "Leia o guia completo",
+                desc: "Você começa pelo eBook em PDF, entendendo a lógica do protocolo, como preparar o ambiente e por que cada etapa ajuda na desaceleração."
+              },
+              {
+                step: "Passo 2",
+                title: "Prepare o ambiente",
+                desc: "Com as orientações do material, você ajusta luzes, reduz distrações e cria um espaço mais favorável ao descanso."
+              },
+              {
+                step: "Passo 3",
+                title: "Aplique as 3 etapas",
+                desc: "O método conduz você por respiração 4-7-8, relaxamento muscular progressivo e visualização do lugar seguro."
+              },
+              {
+                step: "Passo 4",
+                title: "Use os áudios bônus",
+                desc: "Os áudios complementares ajudam a acompanhar cada etapa separadamente ou a prática completa em uma única faixa."
+              }
+            ].map((step, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white/5 border border-white/5 p-8 rounded-[2.5rem] relative"
+              >
+                <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest">{step.step}</span>
+                <h3 className="text-lg font-bold text-white mt-2 mb-4">{step.title}</h3>
+                <p className="text-brand-slate-light text-sm leading-relaxed">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5b. As 3 etapas centrais */}
+      <section className="py-24 px-4 bg-brand-slate-dark/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">As 3 etapas centrais do Protocolo 30M OFF™</h2>
+            <p className="text-brand-slate-light max-w-2xl mx-auto">
+              No eBook, você aprende como e quando aplicar cada etapa. Os áudios bônus ajudam a executar a prática com mais facilidade.
             </p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-12">
             {[
               {
-                step: "Áudio 1",
+                step: "Etapa 1",
                 title: "Respiração 4-7-8",
-                duration: "aprox. 10 minutos",
-                desc: "O primeiro áudio conduz uma prática de respiração simples para ajudar você a reduzir o ritmo, trazer atenção para o presente e iniciar a desaceleração da noite.",
-                footer: "Comece por aqui."
+                desc: "Uma prática simples de respiração para ajudar você a reduzir o ritmo, trazer a atenção para o presente e iniciar o processo de desaceleração.",
+                footer: "Bônus: áudio guiado específico para esta etapa."
               },
               {
-                step: "Áudio 2",
+                step: "Etapa 2",
                 title: "Relaxamento Muscular",
-                duration: "aprox. 13 minutos",
-                desc: "O segundo áudio guia você por uma sequência de relaxamento corporal para soltar tensões físicas acumuladas e permitir que o corpo fique mais leve.",
-                footer: "Deixe o peso do dia ir embora."
+                desc: "Uma sequência de contração e relaxamento corporal para ajudar a soltar tensões físicas acumuladas ao longo do dia.",
+                footer: "Bônus: áudio guiado específico para esta etapa."
               },
               {
-                step: "Áudio 3",
-                title: "Visualização Guiada",
-                duration: "aprox. 10 minutos",
-                desc: "O terceiro áudio conduz uma visualização calma, ajudando sua atenção a sair do excesso de pensamentos e se aproximar de uma sensação de segurança e descanso.",
-                footer: "Finalize em um estado mais tranquilo."
+                step: "Etapa 3",
+                title: "Visualização do Lugar Seguro",
+                desc: "Uma prática de visualização para direcionar a mente a imagens e sensações mais calmas, reduzindo o foco nos pensamentos acelerados.",
+                footer: "Bônus: áudio guiado específico para esta etapa."
               }
             ].map((audio, i) => (
               <motion.div 
@@ -314,47 +382,30 @@ export default function App() {
                 transition={{ delay: i * 0.2 }}
                 className="relative bg-gradient-to-b from-white/10 to-white/5 border border-white/10 p-10 rounded-[3rem] group hover:border-brand-primary/30 transition-all duration-500"
               >
-                <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <span className="text-9xl font-black">{i+1}</span>
-                </div>
                 <div className="mb-6">
                   <span className="text-[10px] font-black text-brand-primary uppercase tracking-[0.4em]">{audio.step}</span>
                   <h3 className="text-2xl font-bold text-white mt-2">{audio.title}</h3>
                 </div>
-                <p className="text-xs font-bold text-brand-primary/60 mb-6 flex items-center gap-2">
-                  <Clock className="h-3 w-3" /> {audio.duration}
-                </p>
                 <p className="text-brand-slate-light leading-relaxed mb-8">{audio.desc}</p>
                 <div className="pt-6 border-t border-white/5">
-                  <p className="text-xs font-serif italic text-white/50">{audio.footer}</p>
+                  <p className="text-xs font-serif italic text-brand-primary/80">{audio.footer}</p>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          <div className="mt-16 text-center">
+          <div className="mt-12 text-center">
             <div className="bg-white/5 inline-block p-6 rounded-3xl border border-white/5 max-w-2xl">
               <p className="text-sm text-brand-slate-light italic">
-                “Se você adormecer antes do fim, tudo bem. O objetivo não é fazer tudo perfeito — é criar uma rotina leve, repetível e sem pressão.”
+                “Bônus Extra: Além dos áudios separados, você também recebe uma prática completa que une as três etapas em uma única condução.”
               </p>
-            </div>
-            <div className="mt-12">
-              <a 
-                href={CHECKOUT_URL}
-                onClick={trackLead}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 bg-brand-primary text-brand-bg px-10 py-5 rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-brand-primary/20"
-              >
-                Quero seguir essa sequência hoje
-              </a>
             </div>
           </div>
         </div>
       </section>
 
       {/* 6. O método sem pressão */}
-      <section className="py-24 px-4 bg-brand-slate-dark/30">
+      <section className="py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Você não precisa fazer perfeito. Só precisa dar play.</h2>
@@ -459,25 +510,28 @@ export default function App() {
       </section>
 
       {/* 10. O que você recebe */}
-      <section className="py-24 px-4">
+      <section className="py-24 px-4 bg-brand-slate-dark/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-white">O que está incluso</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-white">O que você recebe ao entrar no Protocolo 30M OFF™</h2>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { title: "Áudio 1 — Respiração", desc: "Prática guiada de 10 min para iniciar a desaceleração." },
-              { title: "Áudio 2 — Relaxamento", desc: "Condução de 13 min para soltar tensões físicas." },
-              { title: "Áudio 3 — Visualização", desc: "Visualização guiada para direcionar a mente à calma." },
-              { title: "Guia Comece Aqui", desc: "Instruções claras para a ordem correta dos áudios." },
-              { title: "Ritual de 7 dias", desc: "Orientação para criar constância e hábito noturno." },
-              { title: "Acesso Imediato", desc: "Conteúdo digital disponível logo após a confirmação." }
+              { title: "eBook Protocolo 30M OFF™", desc: "O guia principal em PDF com o passo a passo completo para criar e aplicar sua rotina de desaceleração.", badge: "Material Principal" },
+              { title: "Guia Comece Aqui", desc: "Um material introdutório simples para você entender rapidamente como iniciar a aplicação.", badge: "Orientação" },
+              { title: "Áudio: Respiração 4-7-8", desc: "Uma condução guiada para acompanhar a primeira etapa do protocolo.", badge: "Bônus" },
+              { title: "Áudio: Relaxamento Muscular", desc: "Uma condução guiada para facilitar a prática de relaxamento corporal.", badge: "Bônus" },
+              { title: "Áudio: Visualização", desc: "Uma condução guiada para apoiar a prática de visualização e desaceleração mental.", badge: "Bônus" },
+              { title: "Prática Completa 30M OFF™", desc: "Uma faixa extra que une as três etapas em uma única prática guiada.", badge: "Bônus" }
             ].map((item, i) => (
-              <div key={i} className="p-8 border border-white/10 rounded-2xl bg-white/5">
+              <div key={i} className="p-8 border border-white/10 rounded-3xl bg-white/5 relative group hover:border-brand-primary/40 transition-colors">
+                <div className="absolute top-4 right-4 bg-brand-primary/10 text-brand-primary text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md border border-brand-primary/20">
+                  {item.badge}
+                </div>
                 <CheckCircle2 className="h-8 w-8 text-brand-primary mb-4" />
                 <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
-                <p className="text-brand-slate-light mb-0 text-sm">{item.desc}</p>
+                <p className="text-brand-slate-light mb-0 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -489,9 +543,9 @@ export default function App() {
         <div className="max-w-4xl mx-auto bg-gradient-to-br from-brand-slate-dark to-brand-bg rounded-[4rem] p-12 md:p-20 text-center border border-white/5 relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 left-0 w-full h-2 bg-brand-primary opacity-50 shadow-[0_0_20px_rgba(212,175,55,0.4)]"></div>
           
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Inicie hoje sua nova rotina noturna</h2>
-          <p className="text-lg text-brand-slate-light mb-12 max-w-2xl mx-auto">
-            Você não precisa esperar mais uma noite difícil. O Protocolo 30M OFF™ entrega uma sequência simples e guiada para ajudar você a desacelerar.
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Comece hoje a construir uma rotina noturna mais tranquila</h2>
+          <p className="text-lg text-brand-slate-light mb-12 max-w-2xl mx-auto leading-relaxed">
+            Você não precisa esperar mais uma noite difícil para começar a cuidar dos minutos antes de dormir. O Protocolo 30M OFF™ entrega uma sequência simples, guiada e acessível para ajudar você a desacelerar com mais clareza.
           </p>
 
           <div className="mb-12 flex flex-col items-center">
@@ -513,8 +567,8 @@ export default function App() {
             Quero acessar o Protocolo 30M OFF™ <Lock className="h-4 w-4" />
           </a>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 opacity-40">
-            {["Acesso imediato", "Pagamento seguro", "3 áudios guiados", "Guia incluso", "100% digital"].map((tag, i) => (
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 opacity-40">
+            {["Acesso imediato", "Pagamento seguro", "eBook Completo", "Áudios Bônus", "100% digital"].map((tag, i) => (
               <span key={i} className="text-[9px] font-bold uppercase tracking-widest text-white">{tag}</span>
             ))}
           </div>
@@ -544,43 +598,43 @@ export default function App() {
             {[
               {
                 q: "O Protocolo 30M OFF™ cura ansiedade?",
-                a: "Não. O protocolo não é tratamento médico, psicológico ou psiquiátrico. Ele é um conteúdo digital de bem-estar com áudios guiados que podem ajudar você a criar uma rotina mais calma."
+                a: "Não. O protocolo não é tratamento médico, psicológico ou psiquiátrico. Ele é um conteúdo digital educativo de bem-estar composto por um eBook e áudios guiados que podem ajudar você a criar uma rotina mais calma."
               },
               {
                 q: "Ele trata insônia?",
-                a: "Não. Ele foi pensado como uma rotina guiada de desaceleração. Se você enfrenta dificuldade persistente para dormir, procure orientação profissional."
+                a: "Não. O protocolo não é tratamento para insônia. Ele foi pensado como uma rotina guiada de desaceleração. Se você enfrenta dificuldade persistente para dormir, procure orientação profissional."
               },
               {
                 q: "Quanto tempo leva para aplicar?",
-                a: "A sequência completa dura aproximadamente 30 minutos em 3 áudios (respiração, relaxamento e visualização)."
+                a: "A sequência completa dura aproximadamente 30 minutos. O eBook orienta o passo a passo, e os áudios bônus acompanham as 3 etapas de respiração, relaxamento e visualização."
               },
               {
                 q: "Preciso fazer tudo até o fim?",
-                a: "Não. Se você adormecer durante a prática, tudo bem. A ideia é justamente favorecer o descanso."
+                a: "Não precisa transformar isso em cobrança. Se você adormecer durante a prática, tudo bem. A ideia é criar um ritual leve e sem pressão."
               },
               {
                 q: "Preciso ter experiência com meditação?",
-                a: "Não. Os áudios são totalmente guiados e pensados para iniciantes."
+                a: "Não. O eBook explica tudo de forma simples e os áudios são guiados, pensados justamente para quem está começando."
               },
               {
                 q: "Quando recebo o acesso?",
-                a: "Imediatamente após a confirmação do pagamento pelo sistema."
+                a: "O acesso é digital e liberado imediatamente após a confirmação da compra."
               },
               {
                 q: "Funciona para todo mundo?",
-                a: "Cada pessoa responde de uma forma às práticas de relaxamento. Recomendamos o uso por pelo menos 7 dias seguidos."
+                a: "Cada pessoa responde de uma forma. O protocolo oferece uma sequência prática que pode contribuir para uma rotina mais tranquila, mas não promete resultados iguais para todos."
               },
               {
                 q: "Por quantos dias devo usar?",
-                a: "Pelo menos 7 dias no mesmo horário para criar consistência na sua nova rotina noturna."
+                a: "O guia recomenda usar todos os dias, no mesmo horário, por pelo menos 7 dias. A consistência é fundamental para sentir os efeitos do ritual."
               },
               {
-                q: "Posso usar com terapia?",
-                a: "Sim, como uma prática complementar de bem-estar, mas não substitui a orientação do seu terapeuta."
+                q: "Posso usar junto com terapia?",
+                a: "Sim, como uma prática complementar de rotina e bem-estar. Mas ele não substitui o acompanhamento de um profissional de saúde."
               },
               {
-                q: "O que preciso para começar?",
-                a: "Fones de ouvido, cama confortável, luzes baixas e seu celular no modo não perturbe."
+                q: "O que eu preciso para começar?",
+                a: "Fones de ouvido, uma cama ou superfície confortável, luzes baixas e o celular no modo não perturbe para ler o guia e ouvir os áudios."
               }
             ].map((faq, i) => (
               <div key={i} className="bg-white/5 rounded-3xl overflow-hidden border border-white/5 transition-all hover:bg-white/10">
@@ -613,8 +667,8 @@ export default function App() {
       <section className="py-32 px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-8">Hoje à noite você pode começar uma rotina diferente</h2>
-          <p className="text-xl text-brand-slate-light mb-12 max-w-2xl mx-auto">
-            Coloque os fones, reduza as luzes, ative o modo não perturbe e siga os 3 áudios guiados do Protocolo 30M OFF™.
+          <p className="text-xl text-brand-slate-light mb-12 max-w-2xl mx-auto leading-relaxed">
+            Leia o eBook completo, coloque os fones, reduza as luzes e siga as etapas guiadas do Protocolo 30M OFF™.
           </p>
           <a 
             href={CHECKOUT_URL}
@@ -625,7 +679,7 @@ export default function App() {
           >
             Quero começar hoje
           </a>
-          <p className="mt-8 text-[10px] text-brand-slate-light font-bold uppercase tracking-widest">Acesso imediato ao protocolo digital</p>
+          <p className="mt-8 text-[10px] text-brand-slate-light font-bold uppercase tracking-widest">Acesso imediato ao eBook + Áudios Bônus</p>
         </div>
       </section>
 
