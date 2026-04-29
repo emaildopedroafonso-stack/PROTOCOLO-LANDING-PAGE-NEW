@@ -1,22 +1,130 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", serif;
   
-  --color-brand-bg: #050A1A;
-  --color-brand-text: #F8FAFC;
-  --color-brand-primary: #D4AF37; /* Gold */
-  --color-brand-primary-dark: #B8962E;
-  --color-brand-slate-dark: #0F172A;
-  --color-brand-slate-light: #94A3B8;
-  --color-brand-purple: #4C1D95;
+  --color-bg: #07090f;
+  --color-bg2: #0d1120;
+  --color-bg3: #111827;
+  --color-indigo-brand: #6366f1;
+  --color-indigo-brand-light: #818cf8;
+  --color-indigo-brand-dark: #4f46e5;
+  --color-violet-brand: #7c3aed;
+  --color-teal-brand: #14b8a6;
+  --color-gold-brand: #f59e0b;
+  --color-gold-brand-light: #fcd34d;
+  --color-text-brand: #f1f5f9;
+  --color-text-muted: #94a3b8;
 }
 
 @layer base {
   body {
-    @apply bg-brand-bg text-brand-text font-sans antialiased;
+    @apply bg-bg text-text-brand font-sans antialiased overflow-x-hidden;
   }
 }
 
+@layer components {
+  /* STARS BG */
+  .stars {
+    @apply fixed inset-0 z-0 pointer-events-none;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(99,102,241,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(124,58,237,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 0%, rgba(20,184,166,0.07) 0%, transparent 50%);
+  }
+  .stars::before {
+    content: '';
+    @apply absolute inset-0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 60%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 85% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 55%, rgba(255,255,255,0.2) 0%, transparent 100%);
+  }
+
+  /* BUTTONS */
+  .btn-primary-custom {
+    @apply inline-flex items-center justify-center gap-[10px] bg-gradient-to-br from-indigo-brand-dark to-violet-brand text-white font-bold py-4 px-9 rounded-[14px] cursor-pointer no-underline shadow-[0_8px_32px_rgba(99,102,241,0.4),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-300 tracking-[0.3px] relative overflow-hidden;
+  }
+  .btn-primary-custom:hover {
+    @apply -translate-y-[2px] shadow-[0_12px_40px_rgba(99,102,241,0.55),0_4px_12px_rgba(0,0,0,0.3)];
+  }
+  .btn-primary-custom:active {
+    @apply translate-y-0;
+  }
+
+  .btn-cta-custom {
+    @apply inline-flex items-center justify-center gap-[10px] bg-gradient-to-br from-[#d97706] to-gold-brand text-[#07090f] font-extrabold py-[18px] px-10 rounded-[14px] cursor-pointer no-underline shadow-[0_8px_32px_rgba(245,158,11,0.45),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-300 tracking-[0.3px] relative overflow-hidden w-full max-w-[480px];
+  }
+  .btn-cta-custom:hover {
+    @apply -translate-y-[2px] shadow-[0_14px_44px_rgba(245,158,11,0.6)];
+  }
+  .btn-cta-custom:active {
+    @apply translate-y-0;
+  }
+
+  .btn-ghost-custom {
+    @apply bg-transparent border border-[rgba(99,102,241,0.18)] text-text-muted font-medium py-[10px] px-6 rounded-[10px] cursor-pointer transition-all duration-200 mt-3;
+  }
+  .btn-ghost-custom:hover {
+    @apply border-indigo-brand text-indigo-brand-light;
+  }
+
+  /* CARDS */
+  .card-custom {
+    @apply bg-[rgba(255,255,255,0.035)] border border-[rgba(99,102,241,0.18)] rounded-[20px] p-7 backdrop-blur-[12px] transition-all duration-300;
+  }
+  .card-custom:hover {
+    @apply border-[rgba(99,102,241,0.35)] shadow-[0_0_60px_rgba(99,102,241,0.25)];
+  }
+
+  /* QUIZ OPTION */
+  .quiz-option-custom {
+    @apply flex items-start gap-4 bg-[rgba(255,255,255,0.03)] border-[1.5px] border-[rgba(255,255,255,0.08)] rounded-[16px] p-[18px_20px] cursor-pointer transition-all duration-250 mb-3 text-left w-full;
+  }
+  .quiz-option-custom:hover {
+    @apply border-indigo-brand bg-[rgba(99,102,241,0.08)] translate-x-1;
+  }
+  .quiz-option-custom.selected {
+    @apply border-indigo-brand-light bg-[rgba(99,102,241,0.14)] shadow-[0_0_0_3px_rgba(99,102,241,0.15)];
+  }
+
+  /* LOADING */
+  .loading-ring {
+    @apply w-20 h-20 border-[3px] border-[rgba(99,102,241,0.15)] border-t-indigo-brand rounded-full animate-spin mx-auto mb-6;
+  }
+
+  /* VSL */
+  .vsl-wrap-custom {
+    @apply relative w-full pb-[56.25%] rounded-[16px] overflow-hidden border border-[rgba(99,102,241,0.18)] shadow-[0_20px_60px_rgba(0,0,0,0.5)] my-6;
+  }
+  .vsl-wrap-custom iframe {
+    @apply absolute inset-0 w-full h-full border-none;
+  }
+}
+
+@keyframes pulse-custom {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+
+.animate-pulse-custom {
+  animation: pulse-custom 2s infinite;
+}
+
+@keyframes float-custom {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float-custom {
+  animation: float-custom 3s ease-in-out infinite;
+}

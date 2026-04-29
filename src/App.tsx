@@ -1,714 +1,567 @@
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  CheckCircle2, 
-  Clock, 
-  ShieldCheck, 
-  Brain, 
-  Waves, 
-  ArrowRight, 
-  Heart,
-  ChevronDown,
-  Lock,
-  Star,
-  XCircle,
-  Info,
-  Headphones,
-  Bed,
-  Moon,
-  Smartphone,
-  Check
-} from 'lucide-react';
-import { useState } from 'react';
+import { CheckCircle2, ChevronRight, Lock, ShieldCheck, Star, Clock, ArrowRight, Play, Info } from 'lucide-react';
 
-interface CustomWindow extends Window {
-  fbq?: (type: string, name: string) => void;
-}
-
-declare const window: CustomWindow;
-
+// --- CONFIG ---
 const CHECKOUT_URL = "https://pay.kiwify.com.br/FpGJrPt";
-const VSL_URL = "https://www.youtube.com/embed/dM9Bg9TwQGo?autoplay=1&controls=1&rel=0&modestbranding=1";
 
 export default function App() {
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [screen, setScreen] = useState(1);
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [score, setScore] = useState(0);
 
-  const trackLead = () => {
-    if (typeof window !== 'undefined' && window.fbq) {
-      window.fbq('track', 'Lead');
+  // Countdown timer for offer
+  const [timeLeft, setTimeLeft] = useState(899); // 14:59
+
+  useEffect(() => {
+    if (screen === 8) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+      return () => clearInterval(timer);
     }
+  }, [screen]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6 }
+  const goTo = (n: number) => {
+    setScreen(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const staggerContainer = {
-    initial: { opacity: 0 },
-    whileInView: { opacity: 1 },
-    viewport: { once: true },
-    transition: { staggerChildren: 0.1 }
+  const handleSelectOption = (question: string, value: number) => {
+    setAnswers(prev => ({ ...prev, [question]: value }));
+    setTimeout(() => {
+      const qNum = parseInt(question.replace('q', ''));
+      if (qNum < 4) {
+        goTo(qNum + 2);
+      } else {
+        startLoading();
+      }
+    }, 380);
   };
+
+  const startLoading = () => {
+    goTo(6);
+    let step = 0;
+    const interval = setInterval(() => {
+      step++;
+      setLoadingStep(step);
+      if (step === 4) {
+        clearInterval(interval);
+        const finalScore = Object.values(answers).reduce((acc: number, val: number) => acc + val, 0);
+        setScore(finalScore);
+        setTimeout(() => goTo(7), 800);
+      }
+    }, 800);
+  };
+
+  // Result calculation logic
+  const getProfile = () => {
+    if (score >= 10) return {
+      name: "Mente Hiperativa Nível 3",
+      title: "Agitação Mental Crítica",
+      sub: "Seu ritmo mental à noite é extremamente elevado",
+      insight: "Sua mente opera em uma rotação tão alta que o corpo entra em estado de estresse tentando acompanhar. Você provavelmente sente que 'perdeu a chave' para desligar, o que interfere profundamente no seu ciclo de recuperação profunda. O protocolo será fundamental para 'forçar' essa desaceleração de forma suave."
+    };
+    if (score >= 7) return {
+      name: "Mente Hiperativa Nível 2",
+      title: "Agitação Mental Alta",
+      sub: "Seu ritmo mental à noite está acima da média",
+      insight: "Sua mente tem dificuldade em encerrar os processos do dia. Embora você consiga dormir, a qualidade do sono é comprometida porque o cérebro continua processando estímulos em segundo plano. O protocolo ajudará a criar a barreira necessária entre as preocupações e o descanso."
+    };
+    return {
+      name: "Mente Hiperativa Nível 1",
+      title: "Agitação Mental Moderada",
+      sub: "Você apresenta sintomas iniciais de agitação noturna",
+      insight: "Sua mente ainda consegue desacelerar, mas estímulos externos ou dias mais estressantes tiram você do eixo rapidamente. O protocolo servirá como uma proteção extra para garantir que todas as suas noites sejam de descanso real, e não apenas de 'apagão' por exaustão."
+    };
+  };
+
+  const profile = getProfile();
+
+  const progressPct = screen >= 2 && screen <= 5 ? ((screen - 1) / 4) * 100 : screen > 5 ? 100 : 0;
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text selection:bg-brand-primary/20 overflow-x-hidden">
-      {/* Background Gradients */}
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-purple/20 blur-[120px] rounded-full"></div>
-        <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-brand-primary/10 blur-[150px] rounded-full"></div>
+    <div className="relative min-h-screen text-text-brand overflow-x-hidden pb-20">
+      <div className="stars" />
+      
+      {/* Progress Bar */}
+      <div className={`fixed top-0 left-0 right-0 z-50 h-1 bg-white/5 transition-opacity duration-300 ${screen >= 2 && screen <= 6 ? 'opacity-100' : 'opacity-0'}`}>
+        <div 
+          className="h-full bg-gradient-to-r from-indigo-brand to-teal-brand transition-all duration-500 shadow-[0_0_12px_rgba(99,102,241,0.8)]"
+          style={{ width: `${progressPct}%` }}
+        />
+        {screen >= 2 && screen <= 5 && (
+          <div className="fixed top-4 right-4 text-[10px] font-bold text-indigo-brand-light tracking-widest uppercase">
+            Passo {screen - 1} de 4
+          </div>
+        )}
       </div>
 
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 bg-brand-bg/80 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center shadow-md shadow-brand-primary/20">
-              <Waves className="text-brand-bg h-4 w-4" />
-            </div>
-            <span className="font-sans font-bold text-lg text-white tracking-tight">Protocolo 30M OFF™</span>
-          </div>
+      <div className="relative z-10 w-full px-4 mx-auto pt-20">
+        <AnimatePresence mode="wait">
           
-          <a 
-            href={CHECKOUT_URL}
-            onClick={trackLead}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-brand-primary text-brand-bg px-4 py-2 md:px-6 md:py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-brand-primary/20"
-          >
-            Obter Protocolo
-          </a>
-        </div>
-      </nav>
-
-      {/* 1. Hero Section */}
-      <header className="pt-32 pb-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-8 tracking-tight"
-          >
-            Desacelere sua mente nos <span className="text-brand-primary">30 minutos</span> antes de dormir
-          </motion.h1>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="relative mb-10 max-w-4xl mx-auto"
-          >
-            <p className="text-[10px] font-black text-brand-primary uppercase tracking-[0.4em] mb-4">Assista e entenda como funciona</p>
-            <div className="relative aspect-video bg-black rounded-[2rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] border border-white/10 group">
-              <iframe 
-                className="absolute inset-0 w-full h-full"
-                src={VSL_URL}
-                title="Protocolo 30M OFF VSL"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          </motion.div>
-
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-lg md:text-xl text-brand-slate-light mb-10 max-w-3xl mx-auto leading-relaxed"
-          >
-            O Protocolo 30M OFF™ é um eBook digital completo com um passo a passo simples para ajudar você a reduzir estímulos, organizar os pensamentos e criar um ritual de desaceleração antes de dormir — com áudios guiados bônus para facilitar a prática.
-          </motion.p>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 max-w-4xl mx-auto"
-          >
-            {[
-              "Guia completo em PDF passo a passo",
-              "Bônus: Áudios guiados práticos",
-              "Ritual simples de 30 minutos",
-              "Acesso digital imediato"
-            ].map((text, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-widest text-white/80">
-                <CheckCircle2 className="h-4 w-4 text-brand-primary flex-shrink-0" />
-                {text}
-              </div>
-            ))}
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="space-y-4"
-          >
-            <a 
-              href={CHECKOUT_URL}
-              onClick={trackLead}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 bg-brand-primary text-brand-bg px-10 py-5 rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-brand-primary/20 group"
+          {/* SCREEN 1: HERO */}
+          {screen === 1 && (
+            <motion.section 
+              key="s1"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="max-w-2xl mx-auto text-center py-10"
             >
-              Quero começar o Protocolo 30M OFF™ <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </a>
-            <p className="text-[10px] text-brand-slate-light uppercase tracking-widest font-bold">
-              Acesso digital imediato • eBook completo em PDF • Áudios bônus inclusos
-            </p>
-          </motion.div>
-        </div>
-      </header>
-
-      {/* NEW: O que é o Protocolo Section */}
-      <section className="py-24 px-4 border-t border-white/5">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">O que é o Protocolo 30M OFF™?</h2>
-          <div className="space-y-6 text-lg text-brand-slate-light leading-relaxed">
-            <p>
-              O Protocolo 30M OFF™ é um eBook digital completo criado para orientar você, passo a passo, na construção de um ritual noturno de desaceleração. Dentro do material, você aprende como preparar o ambiente, reduzir estímulos, usar técnicas simples de respiração, relaxamento corporal e visualização guiada para tornar os minutos antes de dormir mais leves e organizados.
-            </p>
-            <p>
-              Além do guia completo em PDF, você recebe áudios bônus para acompanhar cada etapa do protocolo e facilitar a aplicação prática, especialmente nas primeiras noites.
-            </p>
-          </div>
-          <div className="mt-12 bg-white/5 border border-white/10 p-8 rounded-[2rem] inline-block">
-            <p className="text-2xl font-serif italic text-brand-primary">
-              “O PDF ensina o método. Os áudios ajudam você a colocar em prática.”
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Identificação do Problema */}
-      <section className="py-24 px-4 bg-brand-slate-dark/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Você deita cansado, mas sua mente parece não desligar?</h2>
-            <p className="text-brand-slate-light max-w-3xl mx-auto">
-              Para muitas pessoas, a hora de dormir é justamente o momento em que os pensamentos ficam mais intensos. Pendências, preocupações, conversas do dia, planos para amanhã e aquela sensação de alerta começam a ocupar espaço — mesmo quando o corpo já está cansado.
-            </p>
-          </div>
-
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="whileInView"
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
-          >
-            {[
-              {
-                title: "Pensamentos em looping",
-                desc: "Você revive situações, antecipa problemas e sente que não consegue pausar a mente."
-              },
-              {
-                title: "Corpo cansado, mente alerta",
-                desc: "Mesmo com sono, parece difícil entrar em um estado real de relaxamento."
-              },
-              {
-                title: "Celular como fuga",
-                desc: "Você tenta se distrair rolando a tela, mas acaba mantendo a mente ainda mais estimulada."
-              },
-              {
-                title: "Noites imprevisíveis",
-                desc: "Cada noite vira uma tentativa diferente de conseguir descansar melhor."
-              }
-            ].map((card, i) => (
-              <motion.div 
-                key={i}
-                variants={fadeIn}
-                className="bg-white/5 border border-white/5 p-8 rounded-[2rem] hover:bg-white/10 transition-colors"
-              >
-                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-brand-primary">
-                  <XCircle className="h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4">{card.title}</h3>
-                <p className="text-brand-slate-light text-sm leading-relaxed">{card.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <p className="text-center mt-16 text-lg italic text-brand-primary/80">
-            “É por isso que tentar dormir 'na força' quase nunca ajuda. Antes de dormir melhor, muitas vezes você precisa aprender a desacelerar.”
-          </p>
-        </div>
-      </section>
-
-      {/* 3. Seção de Solução */}
-      <section className="py-24 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div {...fadeIn} className="space-y-8">
-            <h2 className="text-3xl md:text-5xl font-bold text-white">O Protocolo 30M OFF™ transforma os 30 minutos antes de dormir em uma sequência simples de desaceleração</h2>
-            <p className="text-xl text-brand-slate-light leading-relaxed">
-              Em vez de esperar o sono aparecer do nada, você segue uma ordem guiada: prepara o ambiente, coloca os fones, reduz os estímulos e ouve os áudios na sequência certa.
-            </p>
-            
-            <div className="bg-brand-primary/10 border border-brand-primary/20 p-8 rounded-[2rem]">
-              <p className="text-2xl font-serif italic text-brand-primary">
-                “Não é sobre fazer esforço para dormir. É sobre criar condições para que corpo e mente entendam que o dia acabou.”
-              </p>
-            </div>
-
-            <a 
-              href={CHECKOUT_URL}
-              onClick={trackLead}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 bg-white text-brand-bg px-10 py-5 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-brand-primary transition-all group"
-            >
-              Quero criar minha rotina noturna <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </a>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 4. O que você vai precisar */}
-      <section className="py-24 px-4 bg-brand-slate-dark/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Você só precisa de alguns minutos e um ambiente mais calmo</h2>
-            <p className="text-brand-slate-light max-w-2xl mx-auto">
-              O protocolo foi pensado para ser simples. Nada de equipamentos, técnicas complicadas ou experiência prévia.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: <Headphones />, title: "Fones de ouvido", desc: "Para acompanhar os áudios com mais imersão e menos distrações." },
-              { icon: <Bed />, title: "Cama confortável", desc: "Um lugar onde você possa relaxar o corpo com segurança." },
-              { icon: <Moon />, title: "Luzes fracas", desc: "Um ambiente mais escuro ajuda a reduzir estímulos visuais à noite." },
-              { icon: <Smartphone />, title: "Modo não perturbe", desc: "Para evitar notificações e interrupções durante a prática." }
-            ].map((item, i) => (
-              <motion.div key={i} {...fadeIn} className="text-center p-8">
-                <div className="w-16 h-16 bg-brand-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-primary">
-                  {item.icon}
-                </div>
-                <h4 className="text-lg font-bold text-white mb-3">{item.title}</h4>
-                <p className="text-brand-slate-light text-sm">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Como funciona na prática */}
-      <section className="py-32 px-4 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Como o protocolo funciona na prática</h2>
-            <p className="text-brand-slate-light max-w-2xl mx-auto">
-              O guia completo em PDF mostra como aplicar a rotina nos 30 minutos antes de dormir. Depois de entender o passo a passo, você pode usar os áudios bônus para conduzir a prática com mais facilidade.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                step: "Passo 1",
-                title: "Leia o guia completo",
-                desc: "Você começa pelo eBook em PDF, entendendo a lógica do protocolo, como preparar o ambiente e por que cada etapa ajuda na desaceleração."
-              },
-              {
-                step: "Passo 2",
-                title: "Prepare o ambiente",
-                desc: "Com as orientações do material, você ajusta luzes, reduz distrações e cria um espaço mais favorável ao descanso."
-              },
-              {
-                step: "Passo 3",
-                title: "Aplique as 3 etapas",
-                desc: "O método conduz você por respiração 4-7-8, relaxamento muscular progressivo e visualização do lugar seguro."
-              },
-              {
-                step: "Passo 4",
-                title: "Use os áudios bônus",
-                desc: "Os áudios complementares ajudam a acompanhar cada etapa separadamente ou a prática completa em uma única faixa."
-              }
-            ].map((step, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white/5 border border-white/5 p-8 rounded-[2.5rem] relative"
-              >
-                <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest">{step.step}</span>
-                <h3 className="text-lg font-bold text-white mt-2 mb-4">{step.title}</h3>
-                <p className="text-brand-slate-light text-sm leading-relaxed">{step.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5b. As 3 etapas centrais */}
-      <section className="py-24 px-4 bg-brand-slate-dark/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">As 3 etapas centrais do Protocolo 30M OFF™</h2>
-            <p className="text-brand-slate-light max-w-2xl mx-auto">
-              No eBook, você aprende como e quando aplicar cada etapa. Os áudios bônus ajudam a executar a prática com mais facilidade.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-12">
-            {[
-              {
-                step: "Etapa 1",
-                title: "Respiração 4-7-8",
-                desc: "Uma prática simples de respiração para ajudar você a reduzir o ritmo, trazer a atenção para o presente e iniciar o processo de desaceleração.",
-                footer: "Bônus: áudio guiado específico para esta etapa."
-              },
-              {
-                step: "Etapa 2",
-                title: "Relaxamento Muscular",
-                desc: "Uma sequência de contração e relaxamento corporal para ajudar a soltar tensões físicas acumuladas ao longo do dia.",
-                footer: "Bônus: áudio guiado específico para esta etapa."
-              },
-              {
-                step: "Etapa 3",
-                title: "Visualização do Lugar Seguro",
-                desc: "Uma prática de visualização para direcionar a mente a imagens e sensações mais calmas, reduzindo o foco nos pensamentos acelerados.",
-                footer: "Bônus: áudio guiado específico para esta etapa."
-              }
-            ].map((audio, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="relative bg-gradient-to-b from-white/10 to-white/5 border border-white/10 p-10 rounded-[3rem] group hover:border-brand-primary/30 transition-all duration-500"
-              >
-                <div className="mb-6">
-                  <span className="text-[10px] font-black text-brand-primary uppercase tracking-[0.4em]">{audio.step}</span>
-                  <h3 className="text-2xl font-bold text-white mt-2">{audio.title}</h3>
-                </div>
-                <p className="text-brand-slate-light leading-relaxed mb-8">{audio.desc}</p>
-                <div className="pt-6 border-t border-white/5">
-                  <p className="text-xs font-serif italic text-brand-primary/80">{audio.footer}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <div className="bg-white/5 inline-block p-6 rounded-3xl border border-white/5 max-w-2xl">
-              <p className="text-sm text-brand-slate-light italic">
-                “Bônus Extra: Além dos áudios separados, você também recebe uma prática completa que une as três etapas em uma única condução.”
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. O método sem pressão */}
-      <section className="py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Você não precisa fazer perfeito. Só precisa dar play.</h2>
-            <p className="text-brand-slate-light max-w-3xl mx-auto">
-              Muita gente transforma a hora de dormir em mais uma cobrança: dormir rápido, parar de pensar, relaxar imediatamente. O Protocolo 30M OFF™ segue outro caminho: uma sequência simples, guiada e sem pressão para você apenas ouvir e acompanhar no seu ritmo.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { title: "Sem esforço", desc: "Você não precisa controlar cada pensamento. A proposta é seguir a condução dos áudios com leveza." },
-              { title: "Sem técnica difícil", desc: "Respiração, relaxamento e visualização são apresentados de forma simples, mesmo para iniciantes." },
-              { title: "Com repetição", desc: "O guia recomenda usar todos os dias por 7 dias. A consistência é parte importante do protocolo." }
-            ].map((block, i) => (
-              <motion.div key={i} {...fadeIn} className="bg-white/5 p-10 rounded-[2.5rem] border border-white/5">
-                <h4 className="text-xl font-bold text-brand-primary mb-4">{block.title}</h4>
-                <p className="text-brand-slate-light leading-relaxed">{block.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Benefícios */}
-      <section className="py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">O que o Protocolo 30M OFF™ pode ajudar você a construir</h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { title: "Rotina previsível", desc: "Você deixa de depender apenas da sorte e passa a ter uma sequência para seguir antes de dormir." },
-              { title: "Menos estímulos", desc: "O protocolo incentiva escolhas simples que ajudam a reduzir distrações à noite." },
-              { title: "Mais presença", desc: "As práticas guiadas ajudam você a sair do excesso de pensamentos e voltar a atenção para o corpo." },
-              { title: "Desaceleração suave", desc: "A sequência torna a transição entre o dia agitado e o descanso muito mais leve." },
-              { title: "Clareza mental", desc: "Ao repetir o ritual, você cria um momento de pausa, reduzindo a sensação de mente bagunçada." },
-              { title: "Ritual repetível", desc: "Com áudios organizados, você sabe exatamente o que fazer todas as noites." }
-            ].map((beneficio, i) => (
-              <motion.div key={i} {...fadeIn} className="flex gap-6 p-8 bg-white/5 rounded-[2rem] border border-white/5">
-                <div className="mt-1 flex-shrink-0">
-                  <CheckCircle2 className="h-6 w-6 text-brand-primary" />
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-white mb-2">{beneficio.title}</h4>
-                  <p className="text-brand-slate-light text-sm leading-relaxed">{beneficio.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 8. Para quem é / Não é */}
-      <section className="py-24 px-4 bg-brand-slate-dark/30">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12">
-          <motion.div {...fadeIn} className="bg-white/5 p-12 rounded-[3rem] border border-white/5">
-            <h2 className="text-3xl font-bold text-white mb-8">O Protocolo 30M OFF™ é para você se…</h2>
-            <ul className="space-y-4">
-              {[
-                "Você sente a mente acelerada principalmente à noite",
-                "Você deita cansado, mas continua em estado de alerta",
-                "Você quer reduzir estímulos antes de dormir",
-                "Você busca uma rotina simples e guiada",
-                "Você prefere ouvir uma condução em vez de relaxar sozinho",
-                "Você quer criar um ritual noturno consistente",
-                "Você consegue reservar 30 minutos por noite",
-                "Você entende que a consistência é importante"
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-brand-slate-light">
-                  <Check className="h-5 w-5 text-brand-primary mt-0.5 flex-shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          <motion.div {...fadeIn} className="bg-white/5 p-12 rounded-[3rem] border border-white/5">
-            <h2 className="text-3xl font-bold text-white mb-8">Talvez não seja para você se…</h2>
-            <ul className="space-y-4 mb-8">
-              {[
-                "Você procura cura médica para ansiedade ou insônia",
-                "Você espera promessas milagrosas ou garantidas",
-                "Você não pretende aplicar a rotina recorrentemente",
-                "Você não gosta de ouvir áudios guiados",
-                "Você precisa de acompanhamento clínico individualizado"
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-brand-slate-light opacity-80">
-                  <XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="p-6 bg-red-500/10 rounded-2xl border border-red-500/20 flex items-start gap-3">
-              <Info className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-red-100 leading-relaxed">
-                Se você enfrenta sintomas intensos, persistentes ou sofrimento significativo, procure orientação de um profissional de saúde.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 10. O que você recebe */}
-      <section className="py-24 px-4 bg-brand-slate-dark/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-white">O que você recebe ao entrar no Protocolo 30M OFF™</h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { title: "eBook Protocolo 30M OFF™", desc: "O guia principal em PDF com o passo a passo completo para criar e aplicar sua rotina de desaceleração.", badge: "Material Principal" },
-              { title: "Guia Comece Aqui", desc: "Um material introdutório simples para você entender rapidamente como iniciar a aplicação.", badge: "Orientação" },
-              { title: "Áudio: Respiração 4-7-8", desc: "Uma condução guiada para acompanhar a primeira etapa do protocolo.", badge: "Bônus" },
-              { title: "Áudio: Relaxamento Muscular", desc: "Uma condução guiada para facilitar a prática de relaxamento corporal.", badge: "Bônus" },
-              { title: "Áudio: Visualização", desc: "Uma condução guiada para apoiar a prática de visualização e desaceleração mental.", badge: "Bônus" },
-              { title: "Prática Completa 30M OFF™", desc: "Uma faixa extra que une as três etapas em uma única prática guiada.", badge: "Bônus" }
-            ].map((item, i) => (
-              <div key={i} className="p-8 border border-white/10 rounded-3xl bg-white/5 relative group hover:border-brand-primary/40 transition-colors">
-                <div className="absolute top-4 right-4 bg-brand-primary/10 text-brand-primary text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md border border-brand-primary/20">
-                  {item.badge}
-                </div>
-                <CheckCircle2 className="h-8 w-8 text-brand-primary mb-4" />
-                <h4 className="text-lg font-bold text-white mb-2">{item.title}</h4>
-                <p className="text-brand-slate-light mb-0 text-sm leading-relaxed">{item.desc}</p>
+              <div className="text-6xl mb-6 flex justify-center animate-float-custom">🌙</div>
+              <div className="inline-flex items-center gap-2 bg-indigo-brand/10 border border-indigo-brand/30 rounded-full px-4 py-1.5 text-xs font-semibold text-indigo-brand-light tracking-wide uppercase mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-brand animate-pulse-custom" />
+                Diagnóstico Gratuito · 2 minutos
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] mb-6 text-white">
+                Por que sua mente<br/><span className="text-indigo-brand-light">não para à noite?</span>
+              </h1>
+              <p className="text-text-muted text-lg mb-10 max-w-lg mx-auto">
+                Responda 4 perguntas rápidas e descubra seu <strong className="text-white">perfil de mente acelerada</strong> — e o protocolo exato para desacelerar em 30 minutos.
+              </p>
 
-      {/* 11. Oferta */}
-      <section className="py-32 px-4">
-        <div className="max-w-4xl mx-auto bg-gradient-to-br from-brand-slate-dark to-brand-bg rounded-[4rem] p-12 md:p-20 text-center border border-white/5 relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 left-0 w-full h-2 bg-brand-primary opacity-50 shadow-[0_0_20px_rgba(212,175,55,0.4)]"></div>
-          
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Comece hoje a construir uma rotina noturna mais tranquila</h2>
-          <p className="text-lg text-brand-slate-light mb-12 max-w-2xl mx-auto leading-relaxed">
-            Você não precisa esperar mais uma noite difícil para começar a cuidar dos minutos antes de dormir. O Protocolo 30M OFF™ entrega uma sequência simples, guiada e acessível para ajudar você a desacelerar com mais clareza.
-          </p>
+              <div className="flex flex-wrap justify-center gap-3 mb-10">
+                {[
+                  { n: "+2.400", l: "já fizeram" },
+                  { n: "2 min", l: "para completar" },
+                  { n: "100%", l: "gratuito" }
+                ].map((s, i) => (
+                  <div key={i} className="bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-center">
+                    <span className="block font-serif text-xl font-bold text-indigo-brand-light">{s.n}</span>
+                    <span className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">{s.l}</span>
+                  </div>
+                ))}
+              </div>
 
-          <div className="mb-12 flex flex-col items-center">
-            <span className="text-brand-slate-light line-through text-lg opacity-50">De R$ 97,00</span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-white">R$</span>
-              <span className="text-8xl font-black text-white tracking-tighter">29,90</span>
-            </div>
-            <p className="text-brand-primary font-black uppercase tracking-[0.4em] text-[10px] mt-4">Oferta de Lançamento</p>
-          </div>
+              <button 
+                onClick={() => goTo(2)}
+                className="btn-primary-custom w-full max-w-sm text-lg py-5"
+              >
+                ✨ Descobrir meu perfil agora
+              </button>
+              <p className="mt-4 text-xs text-text-muted flex items-center justify-center gap-1.5">
+                <Lock className="w-3 h-3" /> Sem cadastro · Resultado imediato
+              </p>
+            </motion.section>
+          )}
 
-          <a 
-            href={CHECKOUT_URL}
-            onClick={trackLead}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-brand-primary text-brand-bg px-12 py-6 rounded-full text-sm font-black uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-brand-primary/20 mb-12"
-          >
-            Quero acessar o Protocolo 30M OFF™ <Lock className="h-4 w-4" />
-          </a>
+          {/* SCREEN 2: Q1 */}
+          {screen === 2 && (
+            <QuizScreen 
+              step={1}
+              title="Como sua mente se comporta quando você deita para dormir?"
+              options={[
+                { icon: "🌀", title: "Pensamentos em looping", sub: "Fico repassando situações do dia, preocupações e conversas sem conseguir parar.", val: 3 },
+                { icon: "⚡", title: "Alerta constante", sub: "Meu corpo está cansado, mas sinto que minha mente continua em modo 'ligado'.", val: 2 },
+                { icon: "📱", title: "Fuga pelo celular", sub: "Acabo rolando a tela para me distrair, mas fico ainda mais estimulado.", val: 2 },
+                { icon: "😴", title: "Demoro um pouco, mas consigo", sub: "Levo um tempo para relaxar, mas eventualmente o sono vem.", val: 1 }
+              ]}
+              onSelect={(val) => handleSelectOption('q1', val)}
+              onBack={() => goTo(1)}
+            />
+          )}
 
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 opacity-40">
-            {["Acesso imediato", "Pagamento seguro", "eBook Completo", "Áudios Bônus", "100% digital"].map((tag, i) => (
-              <span key={i} className="text-[9px] font-bold uppercase tracking-widest text-white">{tag}</span>
-            ))}
-          </div>
-        </div>
-      </section>
+          {/* SCREEN 3: Q2 */}
+          {screen === 3 && (
+            <QuizScreen 
+              step={2}
+              title="O que você normalmente faz nos 30 minutos antes de dormir?"
+              options={[
+                { icon: "📺", title: "Séries ou vídeos no celular", sub: "Fico assistindo conteúdo até sentir sono — às vezes até tarde da noite.", val: 3 },
+                { icon: "💬", title: "Redes sociais e mensagens", sub: "Respondo mensagens, vejo stories e acabo perdendo a noção do tempo.", val: 3 },
+                { icon: "🤔", title: "Fico pensando no dia seguinte", sub: "Planejo, me preocupo com tarefas e fico antecipando problemas.", val: 2 },
+                { icon: "📖", title: "Leio ou faço algo calmo", sub: "Já tenho alguma rotina de desaceleração, mas poderia ser melhor.", val: 1 }
+              ]}
+              onSelect={(val) => handleSelectOption('q2', val)}
+              onBack={() => goTo(2)}
+            />
+          )}
 
-      {/* 12. Garantia */}
-      <section className="pb-24 px-4 text-center">
-        <motion.div {...fadeIn} className="max-w-xl mx-auto p-12 bg-white/5 rounded-[3rem] border border-white/5">
-          <ShieldCheck className="h-16 w-16 text-brand-primary mx-auto mb-8" />
-          <h2 className="text-3xl font-bold text-white mb-6">7 Dias de Garantia</h2>
-          <p className="text-brand-slate-light leading-relaxed">
-            Se o protocolo não fizer sentido para você, basta solicitar o reembolso dentro do prazo de 7 dias após a compra. Decisão simples e sem riscos para sua rotina.
-          </p>
-        </motion.div>
-      </section>
+          {/* SCREEN 4: Q3 */}
+          {screen === 4 && (
+            <QuizScreen 
+              step={3}
+              title="Como você se sente ao acordar pela manhã?"
+              options={[
+                { icon: "😩", title: "Exausto, como se não tivesse dormido", sub: "Acordo cansado, com sensação de que o sono não foi reparador.", val: 3 },
+                { icon: "😐", title: "Razoável, mas sem energia", sub: "Acordo, mas preciso de muito café para funcionar bem.", val: 2 },
+                { icon: "😤", title: "Irritado ou ansioso logo cedo", sub: "Já acordo com a cabeça cheia e o humor afetado.", val: 2 },
+                { icon: "🌅", title: "Descansado na maioria dos dias", sub: "Consigo dormir bem, mas quero melhorar ainda mais a qualidade.", val: 1 }
+              ]}
+              onSelect={(val) => handleSelectOption('q3', val)}
+              onBack={() => goTo(3)}
+            />
+          )}
 
-      {/* 13. FAQ */}
-      <section id="faq" className="py-24 px-4 bg-brand-slate-dark/30">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Dúvidas Frequentes</h2>
-            <div className="w-12 h-1 bg-brand-primary mx-auto"></div>
-          </div>
-          
-          <div className="space-y-4">
-            {[
-              {
-                q: "O Protocolo 30M OFF™ cura ansiedade?",
-                a: "Não. O protocolo não é tratamento médico, psicológico ou psiquiátrico. Ele é um conteúdo digital educativo de bem-estar composto por um eBook e áudios guiados que podem ajudar você a criar uma rotina mais calma."
-              },
-              {
-                q: "Ele trata insônia?",
-                a: "Não. O protocolo não é tratamento para insônia. Ele foi pensado como uma rotina guiada de desaceleração. Se você enfrenta dificuldade persistente para dormir, procure orientação profissional."
-              },
-              {
-                q: "Quanto tempo leva para aplicar?",
-                a: "A sequência completa dura aproximadamente 30 minutos. O eBook orienta o passo a passo, e os áudios bônus acompanham as 3 etapas de respiração, relaxamento e visualização."
-              },
-              {
-                q: "Preciso fazer tudo até o fim?",
-                a: "Não precisa transformar isso em cobrança. Se você adormecer durante a prática, tudo bem. A ideia é criar um ritual leve e sem pressão."
-              },
-              {
-                q: "Preciso ter experiência com meditação?",
-                a: "Não. O eBook explica tudo de forma simples e os áudios são guiados, pensados justamente para quem está começando."
-              },
-              {
-                q: "Quando recebo o acesso?",
-                a: "O acesso é digital e liberado imediatamente após a confirmação da compra."
-              },
-              {
-                q: "Funciona para todo mundo?",
-                a: "Cada pessoa responde de uma forma. O protocolo oferece uma sequência prática que pode contribuir para uma rotina mais tranquila, mas não promete resultados iguais para todos."
-              },
-              {
-                q: "Por quantos dias devo usar?",
-                a: "O guia recomenda usar todos os dias, no mesmo horário, por pelo menos 7 dias. A consistência é fundamental para sentir os efeitos do ritual."
-              },
-              {
-                q: "Posso usar junto com terapia?",
-                a: "Sim, como uma prática complementar de rotina e bem-estar. Mas ele não substitui o acompanhamento de um profissional de saúde."
-              },
-              {
-                q: "O que eu preciso para começar?",
-                a: "Fones de ouvido, uma cama ou superfície confortável, luzes baixas e o celular no modo não perturbe para ler o guia e ouvir os áudios."
-              }
-            ].map((faq, i) => (
-              <div key={i} className="bg-white/5 rounded-3xl overflow-hidden border border-white/5 transition-all hover:bg-white/10">
+          {/* SCREEN 5: Q4 */}
+          {screen === 5 && (
+            <QuizScreen 
+              step={4}
+              title="Já tentou alguma técnica para relaxar antes de dormir?"
+              options={[
+                { icon: "❌", title: "Nunca tentei nada específico", sub: "Simplesmente deito e espero o sono aparecer — sem nenhuma rotina.", val: 3 },
+                { icon: "🔄", title: "Já tentei, mas não mantive", sub: "Experimentei meditação ou respiração, mas não consegui criar o hábito.", val: 2 },
+                { icon: "😕", title: "Tentei, mas não funcionou", sub: "Senti que as técnicas eram complicadas demais ou não se encaixavam na minha rotina.", val: 2 },
+                { icon: "✅", title: "Tenho alguma prática, mas quero evoluir", sub: "Já faço algo, mas sinto que poderia ter um método mais estruturado.", val: 1 }
+              ]}
+              onSelect={(val) => handleSelectOption('q4', val)}
+              onBack={() => goTo(4)}
+            />
+          )}
+
+          {/* SCREEN 6: LOADING */}
+          {screen === 6 && (
+            <motion.section 
+              key="s6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="max-w-md mx-auto text-center py-20"
+            >
+              <div className="loading-ring" />
+              <h2 className="font-serif text-2xl font-bold text-white mb-2">Analisando seu perfil...</h2>
+              <p className="text-text-muted animate-pulse mb-10">Calculando seu nível de mente acelerada</p>
+              
+              <div className="space-y-4 text-left">
+                {[
+                  { icon: "🧠", text: "Mapeando padrões de pensamento..." },
+                  { icon: "📊", text: "Calculando índice de agitação mental..." },
+                  { icon: "🎯", text: "Identificando seu perfil único..." },
+                  { icon: "✨", text: "Preparando seu protocolo personalizado..." }
+                ].map((item, i) => (
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: loadingStep > i ? 1 : 0, x: loadingStep > i ? 0 : -10 }}
+                    className="flex items-center gap-3 py-2 border-b border-white/5 text-sm text-text-muted"
+                  >
+                    <span>{item.icon}</span> {item.text}
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
+
+          {/* SCREEN 7: RESULT */}
+          {screen === 7 && (
+            <motion.section 
+              key="s7"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-4xl mx-auto py-10"
+            >
+              <div className="text-center mb-12">
+                <div className="badge mb-8"><span className="dot" /> Diagnóstico Concluído</div>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-6">Seu perfil foi identificado:</h2>
+                
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-brand/20 to-violet-brand/20 border border-indigo-brand/40 rounded-full px-6 py-2.5 text-indigo-brand-light font-bold text-lg mb-10">
+                  🧠 {profile.name}
+                </div>
+
+                <div className="flex flex-col md:flex-row items-center justify-center gap-10">
+                  <div className="relative w-32 h-32 flex items-center justify-center">
+                    <svg className="w-full h-full -rotate-90">
+                      <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-white/5" />
+                      <motion.circle 
+                        cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="364.4" 
+                        initial={{ strokeDashoffset: 364.4 }}
+                        animate={{ strokeDashoffset: 364.4 * (1 - (score * 100 / 12) / 100) }}
+                        transition={{ duration: 1.5, delay: 0.5 }}
+                        className="text-indigo-brand" 
+                      />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center font-bold text-3xl text-white">
+                      {Math.round(score * 100 / 12)}
+                    </span>
+                  </div>
+                  <div className="text-center md:text-left">
+                    <h3 className="text-2xl font-bold text-white mb-1">{profile.title}</h3>
+                    <p className="text-text-muted text-sm">{profile.sub}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 mb-12">
+                <div className="card-custom">
+                  <div className="text-[10px] font-black tracking-widest text-indigo-brand-light uppercase mb-6 flex items-center gap-2">
+                    <Info className="w-3 h-3" /> O que isso significa
+                  </div>
+                  <p className="text-sm text-text-muted leading-relaxed italic">
+                    "{profile.insight}"
+                  </p>
+                </div>
+                
+                <div className="card-custom">
+                  <div className="text-[10px] font-black tracking-widest text-indigo-brand-light uppercase mb-6">Seus indicadores</div>
+                  <div className="space-y-4">
+                    <StatBar label="Agitação mental" val={Math.min(95, score * 8)} color="bg-indigo-brand" />
+                    <StatBar label="Dificuldade de desligar" val={Math.min(95, score * 7)} color="bg-violet-brand" />
+                    <StatBar label="Impacto no sono" val={Math.min(95, score * 6)} color="bg-brand-red" />
+                    <StatBar label="Potencial de melhora" val={94} color="bg-teal-brand" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-text-muted mb-6">Baseado no seu perfil, encontramos a solução ideal para você 👇</p>
                 <button 
-                  onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                  className="w-full p-6 text-left flex justify-between items-center"
+                  onClick={() => goTo(8)}
+                  className="btn-primary-custom text-lg px-12 py-5"
                 >
-                  <span className="font-bold text-white text-sm uppercase tracking-widest">{faq.q}</span>
-                  <ChevronDown className={`h-4 w-4 text-brand-primary transition-transform duration-500 ${activeFaq === i ? 'rotate-180' : ''}`} />
+                  🎯 Ver meu protocolo personalizado <ArrowRight className="w-5 h-5" />
                 </button>
-                <AnimatePresence>
-                  {activeFaq === i && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-6 text-brand-slate-light text-sm leading-relaxed"
-                    >
-                      {faq.a}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </motion.section>
+          )}
 
-      {/* 14. CTA Final */}
-      <section className="py-32 px-4 text-center">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-8">Hoje à noite você pode começar uma rotina diferente</h2>
-          <p className="text-xl text-brand-slate-light mb-12 max-w-2xl mx-auto leading-relaxed">
-            Leia o eBook completo, coloque os fones, reduza as luzes e siga as etapas guiadas do Protocolo 30M OFF™.
-          </p>
-          <a 
-            href={CHECKOUT_URL}
-            onClick={trackLead}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-brand-primary text-brand-bg px-12 py-6 rounded-full text-sm font-black uppercase tracking-widest hover:scale-110 transition-all shadow-2xl shadow-brand-primary/20"
-          >
-            Quero começar hoje
-          </a>
-          <p className="mt-8 text-[10px] text-brand-slate-light font-bold uppercase tracking-widest">Acesso imediato ao eBook + Áudios Bônus</p>
-        </div>
-      </section>
+          {/* SCREEN 8: OFFER */}
+          {screen === 8 && (
+            <motion.section 
+              key="s8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="max-w-5xl mx-auto py-10"
+            >
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 bg-gold-brand/10 border border-gold-brand/30 rounded-full px-4 py-1.5 text-xs font-bold text-gold-brand-light tracking-wide uppercase mb-6">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold-brand animate-pulse" />
+                  Protocolo Desbloqueado para Você
+                </div>
+                <h2 className="font-serif text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+                  Seu protocolo personalizado<br/><span className="text-indigo-brand-light">está pronto</span>
+                </h2>
+                <p className="text-text-muted text-lg max-w-2xl mx-auto">
+                  Com base no seu perfil <strong className="text-white">{profile.name}</strong>, o Protocolo 30M OFF™ foi desenvolvido exatamente para o seu padrão de agitação mental.
+                </p>
+              </div>
 
-      {/* 15. Footer */}
-      <footer className="py-16 bg-black px-4 text-center">
-        <div className="max-w-7xl mx-auto flex flex-col items-center gap-8">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
-              <Waves className="text-brand-bg h-4 w-4" />
-            </div>
-            <span className="font-bold text-lg text-white tracking-tight">Descomplica360</span>
-          </div>
-          
-          <p className="text-[10px] font-bold text-brand-slate-light uppercase tracking-[0.2em] max-w-2xl leading-relaxed opacity-60">
-            O Protocolo 30M OFF™ é um conteúdo digital educativo de bem-estar e rotina noturna. Não substitui diagnóstico, tratamento médico, psicológico ou psiquiátrico. Em caso de sintomas intensos, procure orientação profissional.
-          </p>
+              {/* VSL */}
+              <div className="vsl-wrap-custom mb-16">
+                <iframe
+                  src="https://www.youtube.com/embed/dM9Bg9TwQGo?rel=0&modestbranding=1&color=white&autoplay=1"
+                  title="Protocolo 30M OFF™ — Como funciona"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
 
-          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest">
-            <a href="#" className="text-brand-slate-light hover:text-brand-primary">Privacidade</a>
-            <a href="#" className="text-brand-slate-light hover:text-brand-primary">Termos</a>
-          </div>
-          
-          <p className="text-[9px] text-brand-slate-light/40 uppercase tracking-widest">
-            &copy; 2026 Descomplica360. Todos os direitos reservados.
-          </p>
-        </div>
+              <div className="grid lg:grid-cols-2 gap-10 items-start mb-20">
+                <div className="card-custom h-full">
+                  <div className="text-[10px] font-black tracking-widest text-indigo-brand-light uppercase mb-8 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4" /> O que você recebe
+                  </div>
+                  <ul className="space-y-6">
+                    {[
+                      { t: "eBook completo em PDF", d: "Guia passo a passo do protocolo noturno de 30 minutos" },
+                      { t: "Áudio: Respiração 4-7-8", d: "Para reduzir o ritmo e trazer atenção ao presente" },
+                      { t: "Áudio: Relaxamento Muscular", d: "Soltar tensões físicas acumuladas no dia" },
+                      { t: "Áudio: Visualização", d: "Direcionar a mente a imagens calmas e seguras" },
+                      { t: "🎁 Bônus: Prática Completa", d: "As 3 etapas unidas em uma única condução de áudio" },
+                      { t: "Acesso digital imediato", d: "Disponível em qualquer dispositivo logo após a compra" }
+                    ].map((item, i) => (
+                      <li key={i} className="flex gap-4">
+                        <div className="w-6 h-6 rounded-full bg-teal-brand/10 border border-teal-brand/30 flex items-center justify-center flex-shrink-0 mt-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-teal-brand" />
+                        </div>
+                        <div>
+                          <strong className="block text-white text-sm mb-0.5">{item.t}</strong>
+                          <span className="text-text-muted text-xs leading-relaxed">{item.d}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-indigo-brand/10 to-violet-brand/10 border border-indigo-brand/30 rounded-[2rem] p-10 text-center relative overflow-hidden group hover:border-indigo-brand/50 transition-colors">
+                    <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                      <Lock className="w-32 h-32" />
+                    </div>
+                    <div className="text-[10px] font-black tracking-[0.2em] text-gold-brand uppercase mb-6">Oferta desbloqueada para você</div>
+                    <div className="text-text-muted text-sm line-through mb-1">De R$ 97,00</div>
+                    <div className="font-serif text-6xl font-black text-white mb-2 flex items-center justify-center gap-1">
+                      <span className="text-2xl font-bold text-gold-brand translate-y-[-12px]">R$</span>
+                      29<span className="text-3xl font-bold translate-y-[-6px]">,90</span>
+                    </div>
+                    <p className="text-text-muted text-xs mb-10">Pagamento único · Acesso vitalício</p>
+
+                    <a 
+                      href={CHECKOUT_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-cta-custom w-full text-lg mb-6 group"
+                    >
+                      🌙 Quero começar hoje à noite <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </a>
+
+                    <div className="bg-gold-brand/10 border border-gold-brand/20 rounded-xl py-3 px-4 flex items-center justify-center gap-3 text-gold-brand-light text-sm font-bold animate-pulse">
+                      <Clock className="w-4 h-4" /> Oferta reservada por: <span className="font-mono text-lg">{formatTime(timeLeft)}</span>
+                    </div>
+
+                    <div className="mt-8 flex items-center justify-center gap-3 grayscale opacity-60">
+                      <img src="https://static.kiwify.com.br/kiwify-primary.png" className="h-4" alt="Kiwify" />
+                      <div className="w-px h-3 bg-white/10" />
+                      <span className="text-[9px] uppercase font-bold tracking-widest text-white">100% Seguro</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-teal-brand/5 border border-teal-brand/20 rounded-2xl p-6 flex gap-5 items-center">
+                    <div className="w-12 h-12 rounded-full bg-teal-brand/10 flex items-center justify-center flex-shrink-0">
+                      <ShieldCheck className="w-7 h-7 text-teal-brand" />
+                    </div>
+                    <div>
+                      <strong className="block text-white text-sm mb-1">Garantia Incondicional</strong>
+                      <p className="text-xs text-text-muted leading-relaxed">
+                        Se em 7 dias você não sentir diferença na sua rotina, devolvemos seu investimento. <span className="text-teal-brand font-semibold">Sem perguntas.</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* TESTIMONIALS */}
+              <div className="mb-24">
+                <div className="text-center mb-10">
+                  <span className="text-[10px] font-black tracking-widest text-text-muted uppercase">💬 Quem já aplicou recomenda</span>
+                </div>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {[
+                    { n: "Ana M.", r: "Professora, 34 anos", p: "AM", t: "Na primeira noite já senti diferença. Os áudios são incríveis — parece que minha mente finalmente recebeu permissão para parar." },
+                    { n: "Carlos L.", r: "Engenheiro, 41 anos", p: "CL", t: "Eu ficava no celular até 1h da manhã todo dia. Depois do protocolo, consigo desligar às 22h sem esforço. Mudou minha vida." },
+                    { n: "Renata S.", r: "Advogada, 29 anos", p: "RS", t: "Simples, direto e funciona. Não precisei de meditação complicada — só seguir os áudios na sequência certa já foi suficiente." }
+                  ].map((item, i) => (
+                    <div key={i} className="card-custom border-white/5 bg-white/[0.02]">
+                      <div className="flex gap-1 mb-4">
+                        {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-gold-brand text-gold-brand" />)}
+                      </div>
+                      <p className="text-sm text-text-muted leading-relaxed mb-6 font-medium">"{item.t}"</p>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-brand to-violet-brand flex items-center justify-center text-[10px] font-bold text-white">{item.p}</div>
+                        <div>
+                          <span className="block text-white font-bold text-xs">{item.n}</span>
+                          <span className="text-[10px] text-text-muted">{item.r}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* FINAL CTA */}
+              <div className="bg-white/5 border border-white/10 rounded-[4rem] p-16 text-center shadow-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-indigo-brand/5 to-transparent pointer-events-none" />
+                <div className="text-5xl mb-8">🌙</div>
+                <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mb-6">Hoje à noite você pode começar uma rotina diferente</h2>
+                <p className="text-lg text-text-muted mb-12 max-w-2xl mx-auto leading-relaxed">
+                  Você já sabe qual é o problema. Agora você tem o protocolo exato para transformar sua relação com os minutos antes de dormir.
+                </p>
+                <a 
+                  href={CHECKOUT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-cta-custom text-xl py-6 mx-auto group shadow-[0_20px_50px_rgba(245,158,11,0.3)]"
+                >
+                  🌙 Quero garantir minha vaga no Protocolo 30M OFF™ <Play className="w-6 h-6 fill-current" />
+                </a>
+                <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.2em] text-text-muted">Acesso imediato · Garantia de 7 dias · R$ 29,90</p>
+              </div>
+
+            </motion.section>
+          )}
+
+        </AnimatePresence>
+      </div>
+
+      {/* FOOTER */}
+      <footer className="mt-20 py-10 border-t border-white/5 text-center px-4">
+        <p className="text-[10px] text-text-muted uppercase tracking-[0.2em] mb-4">Protocolo 30M OFF™ © 2024 · Todos os direitos reservados</p>
+        <p className="max-w-2xl mx-auto text-[9px] text-text-muted/60 leading-relaxed uppercase tracking-widest">
+          Este site não faz parte do Facebook ou Google. Além disso, este site não é endossado pelo Facebook ou Google de qualquer maneira. Os produtos podem sofrer alterações sem aviso prévio. Este produto não substitui o aconselhamento profissional.
+        </p>
       </footer>
     </div>
   );
 }
 
+// --- SUBCOMPONENTS ---
 
+interface QuizScreenProps {
+  step: number;
+  title: string;
+  options: { icon: string; title: string; sub: string; val: number }[];
+  onSelect: (val: number) => void;
+  onBack: () => void;
+}
+
+function QuizScreen({ step, title, options, onSelect, onBack }: QuizScreenProps) {
+  return (
+    <motion.section 
+      key={`q${step}`}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="max-w-2xl mx-auto py-10"
+    >
+      <div className="flex gap-1.5 justify-center mb-8">
+        {[1, 2, 3, 4].map((s) => (
+          <div key={s} className={`h-1 rounded-full transition-all duration-500 ${s < step ? 'bg-teal-brand w-1.5' : s === step ? 'bg-indigo-brand w-6' : 'bg-white/10 w-1.5'}`} />
+        ))}
+      </div>
+      <div className="text-[10px] font-black text-indigo-brand-light uppercase tracking-[0.2em] mb-3 text-center">Pergunta {step} de 4</div>
+      <h2 className="font-serif text-2xl md:text-3xl font-bold text-white text-center leading-tight mb-12">{title}</h2>
+
+      <div className="space-y-4">
+        {options.map((opt, i) => (
+          <button 
+            key={i}
+            onClick={() => onSelect(opt.val)}
+            className="quiz-option-custom group"
+          >
+            <span className="text-3xl mt-1">{opt.icon}</span>
+            <div className="flex-1">
+              <strong className="block text-white text-base mb-1 group-hover:text-indigo-brand-light transition-colors">{opt.title}</strong>
+              <p className="text-xs text-text-muted leading-relaxed line-clamp-2">{opt.sub}</p>
+            </div>
+            <div className="w-5 h-5 rounded-full border-2 border-white/10 flex-shrink-0 mt-1 flex items-center justify-center group-hover:border-indigo-brand/50 transition-all">
+              <div className="w-2.5 h-2.5 rounded-full bg-indigo-brand opacity-0 group-hover:opacity-40" />
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <div className="text-center mt-12">
+        <button onClick={onBack} className="btn-ghost-custom text-[10px] uppercase font-bold tracking-widest opacity-60 hover:opacity-100">
+          ← Voltar
+        </button>
+      </div>
+    </motion.section>
+  );
+}
+
+function StatBar({ label, val, color }: { label: string; val: number; color: string }) {
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between text-[10px] font-bold text-text-muted uppercase tracking-wider">
+        <span>{label}</span>
+        <span className="text-white">{val}%</span>
+      </div>
+      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+        <motion.div 
+          initial={{ width: 0 }}
+          animate={{ width: `${val}%` }}
+          transition={{ duration: 1.5, delay: 0.8 }}
+          className={`h-full rounded-full ${color} shadow-[0_0_10px_rgba(99,102,241,0.3)]`}
+        />
+      </div>
+    </div>
+  );
+}
